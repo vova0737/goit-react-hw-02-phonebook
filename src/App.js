@@ -1,16 +1,18 @@
 import './App.css';
 import React, { Component } from 'react';
-import Container from './Components/Container';
-import Section from './Components/Section';
-import ContactForm from './Components/ContactForm';
-import ContactList from './Components/ContactList';
-import Filter from './Components/Filter';
+import { v4 as uuidv4 } from 'uuid';
+
+import Container from './components/Container';
+import Section from './components/Section';
+import ContactForm from './components/ContactForm';
+import ContactList from './components/ContactList';
+import Filter from './components/Filter';
 
 const initialState = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '+380 93 555 77 88' },
-  { id: 'id-2', name: 'Hermione Kline', number: '+380 67 442 74 98' },
-  { id: 'id-3', name: 'Eden Clements', number: '+380 63 005 71 84' },
-  { id: 'id-4', name: 'Annie Copeland', number: '+380 79 815 07 84' },
+  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
 ];
 
 class App extends Component {
@@ -19,8 +21,72 @@ class App extends Component {
     filter: '',
   };
 
+  addContact = (name, number) => {
+    const { contacts } = this.state;
 
+    const toLowerCase = contact =>
+      contact.name.toLowerCase() === name.toLowerCase();
 
-};
+    const contactFind = contacts.find(toLowerCase);
+
+    if (contactFind) {
+      alert(`${name} is already in contacts`);
+      return;
+    }
+
+    const newContact = {
+      id: uuidv4(),
+      name,
+      number,
+    };
+
+    this.setState(({ contacts }) => ({
+      contacts: [...contacts, newContact],
+    }));
+  };
+
+  handleFilterInput = e => {
+    const filter = e.currentTarget.value;
+    this.setState({ filter });
+  };
+
+  handleFilter() {
+    const { contacts, filter } = this.state;
+
+    return filter
+      ? contacts.filter(({ name }) =>
+          name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()),
+        )
+      : contacts;
+  }
+
+  deleteContact = e => {
+    const deletedId = e.currentTarget.dataset.id;
+
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== deletedId),
+    }));
+    e.currentTarget.blur();
+  };
+
+  render() {
+    const { filter } = this.state;
+
+    return (
+      <Container>
+        <Section title="Phonebook">
+          <ContactForm onSubmit={this.addContact} />
+        </Section>
+        <Section title="Contacts">
+          <Filter value={filter} onChange={this.handleFilterInput} />
+          <ContactList
+            contacts={this.handleFilter()}
+            deleteHandler={this.deleteContact}
+          />
+        </Section>
+      </Container>
+    );
+  }
+}
 
 export default App;
