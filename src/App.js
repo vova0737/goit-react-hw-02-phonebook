@@ -50,14 +50,12 @@ class App extends Component {
     this.setState({ filter });
   };
 
-  handleFilter() {
+  getFilteredContacts() {
     const { contacts, filter } = this.state;
-    if (contacts.length) {
-      return contacts.filter(contact =>
-        contact.name.toLowerCase().includes(filter.toLowerCase()),
-      );
-    }
-  };
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase()),
+    );
+  }
 
   deleteContact = e => {
     const deletedId = e.currentTarget.dataset.id;
@@ -79,7 +77,7 @@ class App extends Component {
         <Section title="Contacts">
           <Filter value={filter} onChange={this.handleFilterInput} />
           <ContactList
-            contacts={this.handleFilter()}
+            contacts={this.getFilteredContacts()}
             deleteHandler={this.deleteContact}
           />
         </Section>
