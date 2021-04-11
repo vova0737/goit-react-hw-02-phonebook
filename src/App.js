@@ -52,13 +52,12 @@ class App extends Component {
 
   handleFilter() {
     const { contacts, filter } = this.state;
-
-    return filter
-      ? contacts.filter(({ name }) =>
-          name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()),
-        )
-      : contacts;
-  }
+    if (contacts.length) {
+      return contacts.filter(contact =>
+        contact.name.toLowerCase().includes(filter.toLowerCase()),
+      );
+    }
+  };
 
   deleteContact = e => {
     const deletedId = e.currentTarget.dataset.id;
